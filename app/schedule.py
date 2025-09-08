@@ -140,17 +140,22 @@ def find_cab(rows, r, c, cab_col, right_bound, prefer_above):
     order = [r, r+1, r-1] if prefer_above else [r, r+1, r-1]
     if cab_col is not None:
         for rr in order:
-            cab = extract_cabinet(get(rr, cab_col));  if cab: return cab
+            cab = extract_cabinet(get(rr, cab_col));  
+            if cab: return cab
     for rr in order:
-        cab = extract_cabinet(get(rr, c+1));         if cab: return cab
+        cab = extract_cabinet(get(rr, c+1));         
+        if cab: return cab
     limit = min(c+3, right_bound)
     for rr in order:
         for cc in range(c+2, limit+1):
-            cab = extract_cabinet(get(rr, cc));      if cab: return cab
+            cab = extract_cabinet(get(rr, cc));      
+            if cab: return cab
     for rr in order:
-        cab = extract_cabinet(get(rr, c));           if cab: return cab
+        cab = extract_cabinet(get(rr, c));           
+        if cab: return cab
     for rr in order:
-        cab = extract_cabinet(get(rr, c-1));         if cab: return cab
+        cab = extract_cabinet(get(rr, c-1));         
+        if cab: return cab
     return None
 
 def extract_schedule(rows, labels, headers, label, cab_info):
