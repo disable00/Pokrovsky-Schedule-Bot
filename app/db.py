@@ -67,8 +67,6 @@ def fmt_msk(iso: Optional[str]) -> str:
     except Exception:
         return str(iso)
 
-
-# ---------- users / events ----------
 def upsert_user(user):
     db = ensure_db()
     uid, first, uname = user.id, (user.first_name or "").strip(), (user.username or "").strip()
@@ -84,7 +82,6 @@ def upsert_user(user):
         )
     db.commit()
 
-
 def log_event(uid: int, t: str, meta: str = ""):
     db = ensure_db()
     db.execute("INSERT INTO events(user_id, ts, type, meta) VALUES (?,?,?,?)", (uid, now_utc(), t, meta))
@@ -95,8 +92,6 @@ def all_user_ids() -> List[int]:
     db = ensure_db()
     return [row[0] for row in db.execute("SELECT user_id FROM users").fetchall()]
 
-
-# ---------- schedules ----------
 def sched_get_all() -> Dict[str, Tuple[str, Optional[str]]]:
     db = ensure_db()
     cur = db.execute("SELECT date_label, link_url, google_url FROM schedules")
@@ -115,7 +110,6 @@ def sched_upsert(date_label: str, link_url: str, google_url: Optional[str]):
     db.commit()
 
 
-# ---------- sheet hashes ----------
 def hash_get(date_label: str, gid: str) -> Optional[str]:
     db = ensure_db()
     row = db.execute("SELECT hash FROM sheet_hashes WHERE date_label=? AND gid=?", (date_label, gid)).fetchone()
