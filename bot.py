@@ -10,7 +10,7 @@ from app.watcher import watch_loop
 
 
 def main():
-    if not TOKEN or TOKEN == "PUT_YOUR_TELEGRAM_BOT_TOKEN_HERE":
+    if not TOKEN:
         raise SystemExit("Вставьте токен в app/config.py или .env.")
 
     bot = Bot(
