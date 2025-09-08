@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import aiohttp
 from typing import Optional
 from app.config import HEADERS
