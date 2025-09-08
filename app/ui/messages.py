@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from aiogram.types import Message, CallbackQuery
 
 async def show_loader(cb_or_msg, toast="Загружаю…", text="⚙️ Загружаю…") -> Message:
