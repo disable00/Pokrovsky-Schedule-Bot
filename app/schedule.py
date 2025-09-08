@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
 import re, csv
 from io import StringIO
 from typing import Dict, Tuple, Optional, List, Set, Any
 from dataclasses import dataclass
-
 from app.parsers.site import get_links_from_site, SLink
 from app.parsers.sheets import htmlview_url, csv_url, resolve_google_url, sheets_meta
 from app.http import fetch_text
