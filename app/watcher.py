@@ -1,8 +1,6 @@
-# -*- coding: utf-8 -*-
 import asyncio, random, hashlib, html
 from typing import Optional
 from aiogram import Bot
-
 from app.parsers.site import get_links_from_site
 from app.parsers.sheets import resolve_google_url, sheets_meta, csv_url
 from app.http import fetch_text
@@ -32,7 +30,6 @@ async def check_once(bot: Bot):
         return
     known = sched_get_all()
 
-    # Новые даты
     for l in links:
         if l.date not in known:
             try:
@@ -43,7 +40,6 @@ async def check_once(bot: Bot):
             DOC_URL[l.date] = g_url or DOC_URL.get(l.date, "")
             await broadcast(bot, f"🆕 Появилось новое расписание на <b>{l.date}</b>")
 
-    # Правки внутри таблиц
     for date, (link_url, g_url) in sched_get_all().items():
         if not g_url:
             try:
@@ -73,12 +69,11 @@ async def check_once(bot: Bot):
                     f"✏️ Обновлено расписание на <b>{date}</b> — внесены правки в лист «{html.escape(title)}»\n{fmt_msk(now_utc())}",
                 )
 
-    # Обновим кэш дат в памяти
     if links:
         LINKS[:] = links
 
 async def watch_loop(bot: Bot):
-    await check_once(bot)  # первый прогон сразу
+    await check_once(bot)
     while True:
-        await asyncio.sleep(random.randint(300, 600))  # 5–10 мин
+        await asyncio.sleep(random.randint(300, 600))
         await check_once(bot)
