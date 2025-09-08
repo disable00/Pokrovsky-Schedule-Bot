@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
 from typing import Dict, Set, Tuple
 import re
@@ -16,7 +15,6 @@ def htmlview_url(url: str) -> str: return _rebuild(url, "htmlview", {})
 def csv_url(url: str, gid: str) -> str: return _rebuild(url, "export", {"format": "csv", "gid": gid})
 
 async def resolve_google_url(url: str) -> str:
-    """Если это страница школы, вытащить ссылку на Google Sheets."""
     if "docs.google.com/spreadsheets" in url:
         return url
     soup = BeautifulSoup(await fetch_text(url), "html.parser")
@@ -29,7 +27,6 @@ async def resolve_google_url(url: str) -> str:
     raise RuntimeError("Не нашли ссылку на Google Sheets.")
 
 async def sheets_meta(google_url: str) -> Tuple[Dict[str, str], Set[str]]:
-    """Вернуть {gid:title} и множество gid из htmlview."""
     html_text = await fetch_text(htmlview_url(google_url))
     soup = BeautifulSoup(html_text, "html.parser")
     gid2title: Dict[str, str] = {}
