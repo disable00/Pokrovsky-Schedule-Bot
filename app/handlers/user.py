@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
@@ -15,7 +14,7 @@ from app.schedule import (
 )
 
 router = Router()
-ensure_db()  # инициализируем БД сразу
+ensure_db() 
 
 
 @router.message(Command("start"))
@@ -143,7 +142,7 @@ async def on_pick_label(c: CallbackQuery):
     _, date, gid, klass = c.data.split(":", 3)
     log_event(c.from_user.id, "pick_class", f"{date}|{klass}")
     loader = await show_loader(c, "Загружаю…", "⚙️ Загружаю расписание…")
-    # ensure cache
+    
     if (date, gid) not in MATRIX:
         try:
             import re as _re
