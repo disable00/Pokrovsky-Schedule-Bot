@@ -1,0 +1,10 @@
+# venv / кэш / IDE
+.venv/
+__pycache__/
+*.pyc
+.vscode/
+.idea/
+
+# локальные файлы
+.env
+bot_stats.sqlite3
