@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 from aiogram import Dispatcher, Bot
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.types import BotCommand
 import asyncio
-
 from app.config import TOKEN
 from app.handlers.user import router as user_router
 from app.handlers.admin import router as admin_router
@@ -13,7 +11,7 @@ from app.watcher import watch_loop
 
 def main():
     if not TOKEN or TOKEN == "PUT_YOUR_TELEGRAM_BOT_TOKEN_HERE":
-        raise SystemExit("⚠️ Вставьте токен в app/config.py (TOKEN) или .env.")
+        raise SystemExit("Вставьте токен в app/config.py или .env.")
 
     bot = Bot(
         TOKEN,
