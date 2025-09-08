@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from dataclasses import dataclass
 from typing import List
 from bs4 import BeautifulSoup
@@ -11,7 +10,7 @@ from app.http import fetch_text
 class SLink:
     title: str
     url: str
-    date: str  # 'dd.mm'
+    date: str 
 
 SECTION_RX = re.compile(r"образовательная\s+площадка\s*№\s*(\d+)", re.IGNORECASE)
 TITLE_RX   = re.compile(r"расписан\w*\s+урок\w*\s+на\s+(\d{2}\.\d{2})", re.IGNORECASE)
@@ -21,7 +20,7 @@ def _norm(s: str) -> str:
     return " ".join((s or "").split()).strip()
 
 async def get_links_from_site() -> List[SLink]:
-    """Возвращает ссылки на расписание для площадки №1 (без начальной школы)."""
+    # блок ниже возвращает ссылки на расписание 
     soup = BeautifulSoup(await fetch_text(PAGE_URL), "html.parser")
     cur, out = None, []
     for el in soup.find_all(True):
