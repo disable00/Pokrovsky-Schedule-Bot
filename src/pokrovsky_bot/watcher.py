@@ -8,7 +8,7 @@ from .sheets import resolve_google_url, sheets_meta, csv_url
 from .site import get_links_from_site
 from .http import fetch_text
 from .utils import fmt_msk
-from . import state  # <-- важно: работаем с одним модулем состояния
+from . import state
 
 
 async def broadcast(bot: Bot, text: str):
@@ -36,7 +36,6 @@ async def check_once(bot: Bot):
 
     known = sched_get_all()
 
-    # 1) Новые даты
     for l in links:
         if l.date not in known:
             try:
@@ -45,10 +44,8 @@ async def check_once(bot: Bot):
                 g_url = None
             sched_upsert(l.date, l.url, g_url)
             await broadcast(bot, f"🆕 Появилось новое расписание на <b>{l.date}</b>")
-            # кладём в общий кэш URL таблицы (мутируем общий dict)
             state.DOC_URL[l.date] = g_url or state.DOC_URL.get(l.date)
 
-    # 2) Правки внутри таблиц
     for date, (link_url, g_url) in sched_get_all().items():
         if not g_url:
             try:
@@ -80,7 +77,6 @@ async def check_once(bot: Bot):
                     f"✏️ Обновлено расписание на <b>{date}</b> — внесены правки в лист «{title}»\n{tnow}"
                 )
 
-    # 3) Обновляем общий список ссылок для интерфейса (мутируем объект!)
     state.LINKS.clear()
     state.LINKS.extend(links or [])
 
@@ -89,5 +85,5 @@ async def watch_loop(bot: Bot):
     """Фоновый цикл: каждые ~5–10 минут"""
     await check_once(bot)
     while True:
-        await asyncio.sleep(random.randint(300, 600))  # 5–10 мин
+        await asyncio.sleep(random.randint(300, 600))
         await check_once(bot)
