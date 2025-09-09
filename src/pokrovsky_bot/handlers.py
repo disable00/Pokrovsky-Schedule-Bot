@@ -2,11 +2,9 @@ import asyncio
 import html
 import re
 from typing import List
-
 from aiogram import F
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, BotCommand
-
 from .config import settings
 from .db import upsert_user, log_event
 from .keyboard import MAIN_KB
