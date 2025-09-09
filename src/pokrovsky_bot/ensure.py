@@ -2,9 +2,7 @@ import asyncio
 import csv
 from io import StringIO
 from typing import Dict, List, Optional, Set, Tuple
-
 import aiohttp
-
 from .config import HEADERS
 from .db import sched_upsert
 from .http import fetch_text
@@ -12,7 +10,6 @@ from .sheets import resolve_google_url, sheets_meta, csv_url
 from .site import get_links_from_site
 from .state import DOC_URL, GID_BY_GRADE, MATRIX, LINKS
 from .parser import parse_headers, build_cab_map, grade_from_label
-
 
 async def ensure_links():
     global LINKS
@@ -26,7 +23,6 @@ async def get_rows_from_csv(g_url: str, gid: str) -> List[List[str]]:
 
 
 async def ensure_sheet_for_grade(date: str, grade: int):
-    """Гарантированно получить (rows, labels, headers, cab_map) и gid для выбранного номера класса."""
     g_url = DOC_URL.get(date)
     if not g_url:
         await ensure_links()
@@ -35,7 +31,6 @@ async def ensure_sheet_for_grade(date: str, grade: int):
             raise RuntimeError("Дата не найдена.")
         g_url = await resolve_google_url(link.url); DOC_URL[date] = g_url; sched_upsert(date, link.url, g_url)
 
-    # быстрый путь
     if date in GID_BY_GRADE and grade in GID_BY_GRADE[date]:
         gid = GID_BY_GRADE[date][grade]
         if (date, gid) not in MATRIX:
