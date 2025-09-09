@@ -1,11 +1,9 @@
 import html
 import re
 from typing import Dict, List, Optional, Tuple
-
 from .state import CLASS_PURE_RX, CLASS_LABEL_RX, TIME_RX
 from .utils import norm, norm_soft, normalize_hyphens
 
-# --- паттерны для распознавания кабинетов ---
 HYPHENS = "-\u2010\u2011\u2012\u2013\u2014\u2212"
 HCLASS = re.escape(HYPHENS)
 
@@ -16,7 +14,6 @@ CAB_CODE_RX = re.compile(
     rf"|(?:\b(спортзал(?:\s*\d*)?|актовый зал|спорт[ .-]?зал|ауд\.?\s*\d+)\b)"
 )
 
-# ---------- утилиты ----------
 def extract_cabinet(text: Optional[str]) -> Optional[str]:
     if not text:
         return None
@@ -41,7 +38,6 @@ def grade_from_label(label: str) -> Optional[int]:
     m = re.match(r"(\d{1,2})", label)
     return int(m.group(1)) if m else None
 
-# ---------- поиск заголовков блока ----------
 def parse_headers(rows: List[List[str]]) -> Tuple[Dict[str, Tuple[int, int, int]], List[int]]:
     labels: Dict[str, Tuple[int, int, int]] = {}
     headers: List[int] = []
@@ -78,11 +74,9 @@ def right_boundary(
     return min(next_cols[0] if next_cols else total_cols, total_cols)
 
 def detect_cab_col(rows: List[List[str]], hdr: int, subj_col: int, end_row: int, right_bound: int) -> Optional[int]:
-    # явный заголовок "каб"
     for cand in range(subj_col + 1, min(subj_col + 4, right_bound) + 1):
         if cand < len(rows[hdr]) and "каб" in norm(rows[hdr][cand]).lower():
             return cand
-    # статистика встречаемости кабинетов в первых ~18 строках блока
     best, hits = None, -1
     for cand in range(subj_col + 1, min(subj_col + 4, right_bound) + 1):
         cnt = 0
@@ -106,7 +100,6 @@ def build_cab_map(
         m[lb] = (detect_cab_col(rows, hdr, subj_col, end, right), right)
     return m
 
-# ---------- извлечение по правилам «пара строк» ----------
 def _normalize_time(s: str) -> str:
     s = (s or "").replace(".", ":").strip()
     s = re.sub(r"\s*[-–—]\s*", " - ", s)
@@ -117,7 +110,7 @@ def extract_schedule(
     labels: Dict[str, Tuple[int, int, int]],
     headers: List[int],
     label: str,
-    cab_info: Tuple[Optional[int], int],  # cab_col не используем для поиска
+    cab_info: Tuple[Optional[int], int],
 ):
     hdr, time_col, subj_col = labels[label]
     end = next_header(headers, hdr, len(rows))
@@ -132,14 +125,11 @@ def extract_schedule(
         if subj and CLASS_PURE_RX.match(subj):
             break
 
-        # где время: в этой строке или в нижней
         t_here = norm_soft(row[time_col]) if time_col < len(row) else ""
         t_next = norm_soft(rows[r + 1][time_col]) if (r + 1) < end and time_col < len(rows[r + 1]) else ""
 
-        # если предмет есть и время в НИЖНЕЙ строке — это «пара» строк
         if subj and t_next and not t_here and (r + 1) < end:
             time_range = _normalize_time(t_next)
-            # кабинет: правый нижний сосед (r+1, subj_col+1), не выходя за правую границу
             cab = None
             cc = subj_col + 1
             if cc <= right_bound and cc < len(rows[r + 1]):
@@ -148,11 +138,9 @@ def extract_schedule(
             r += 2
             continue
 
-        # одиночная строка (время здесь или вообще нет)
         time_range = _normalize_time(t_here)
         cab = None
         if subj:
-            # по правилу — правый нижний; если нижней строки нет, пробуем правого соседа в этой строке
             if (r + 1) < end:
                 cc = subj_col + 1
                 if cc <= right_bound and cc < len(rows[r + 1]):
@@ -162,7 +150,6 @@ def extract_schedule(
                 if cc0 < len(row) and cc0 <= right_bound:
                     cab = extract_cabinet(row[cc0])
 
-        # если и времени, и предмета нет — пропускаем
         if not time_range and not subj:
             r += 1
             continue
@@ -172,7 +159,6 @@ def extract_schedule(
 
     return out
 
-# ---------- группировка и вывод ----------
 def _time_key(t: str) -> str:
     s = (t or "").replace(".", ":").strip()
     m = re.search(r'(\d{1,2}):(\d{2}).*?(\d{1,2}):(\d{2})', s)
