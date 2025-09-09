@@ -5,7 +5,6 @@ from aiogram.types import (
     InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 )
 
-# Regexes / constants
 SECTION_RX = re.compile(r"образовательная\s+площадка\s*№\s*(\d+)", re.IGNORECASE)
 TITLE_RX   = re.compile(r"расписан\w*\s+урок\w*\s+на\s+(\d{2}\.\d{2})", re.IGNORECASE)
 CLASS_LABEL_RX = re.compile(r"(\d{1,2})\s*([^\d\s][^\d]*)", re.UNICODE)
@@ -13,7 +12,6 @@ TIME_RX = re.compile(r"\d{1,2}[:.]\d{2}\s*[-–—]\s*\d{1,2}[:.]\d{2}")
 CLASS_PURE_RX = re.compile(r'^\s*\d{1,2}\s*[A-Za-zА-Яа-яЁё]{1,6}\s*$')
 EXCLUDE_SUBSTRINGS = {"начальная школа"}
 
-# Runtime caches
 LINKS: List[Any] = []
 DOC_URL: Dict[str, str] = {}
 GID_BY_GRADE: Dict[str, Dict[int, str]] = {}
@@ -21,7 +19,6 @@ ALL_GIDS: Dict[str, Set[str]] = {}
 MATRIX: Dict[Tuple[str, str], Tuple[Any, Any, Any, Any]] = {}
 STATE: Dict[int, Dict[str, Any]] = {}
 
-# Keyboards
 MAIN_KB = ReplyKeyboardMarkup(
     keyboard=[
         [KeyboardButton(text="📅 Посмотреть расписание")],
