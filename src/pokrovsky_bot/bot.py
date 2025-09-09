@@ -2,7 +2,6 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.types import BotCommand
-
 from .config import settings
 from .db import ensure_db
 from .handlers import (
@@ -25,7 +24,6 @@ def build_bot_dp():
     )
     dp = Dispatcher()
 
-    # Регистрация хэндлеров
     from aiogram.filters import Command
 
     dp.message.register(cmd_start, Command("start"))
@@ -39,7 +37,6 @@ def build_bot_dp():
 
     dp.message.register(cmd_admin, Command("admin"))
 
-    # Startup без аргументов (Aiogram вызывает без параметров). Используем замыкание на `bot`.
     async def on_startup():
         await bot.set_my_commands([
             BotCommand(command="start", description="Посмотреть расписание")
