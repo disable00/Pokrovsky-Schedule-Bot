@@ -1,6 +1,5 @@
 import sqlite3
 from typing import Optional, Tuple, Dict
-
 from .config import settings
 from .utils import fmt_msk
 
