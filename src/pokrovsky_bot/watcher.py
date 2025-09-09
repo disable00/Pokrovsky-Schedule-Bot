@@ -12,7 +12,6 @@ from . import state
 
 
 async def broadcast(bot: Bot, text: str):
-    """Шлём всем пользователям (кто писал боту). Ошибки тихо игнорируем."""
     from .db import DB
     users = [row[0] for row in DB.execute("SELECT user_id FROM users").fetchall()]
     sem = asyncio.Semaphore(20)
@@ -28,7 +27,6 @@ async def broadcast(bot: Bot, text: str):
 
 
 async def check_once(bot: Bot):
-    """Один проход: ищем новые даты и правки в таблицах."""
     try:
         links = await get_links_from_site()
     except Exception:
@@ -82,7 +80,6 @@ async def check_once(bot: Bot):
 
 
 async def watch_loop(bot: Bot):
-    """Фоновый цикл: каждые ~5–10 минут"""
     await check_once(bot)
     while True:
         await asyncio.sleep(random.randint(300, 600))
