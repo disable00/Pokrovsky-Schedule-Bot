@@ -1,8 +1,6 @@
 from typing import List
 from urllib.parse import urljoin
-
 from bs4 import BeautifulSoup
-
 from .config import settings
 from .http import fetch_text
 from .models import SLink
@@ -11,7 +9,6 @@ from .utils import norm
 
 
 async def get_links_from_site() -> List[SLink]:
-    """Вытащить только «площадка №1», игнорируя «начальная школа»."""
     PAGE_URL = settings.PAGE_URL
     soup = BeautifulSoup(await fetch_text(PAGE_URL), "html.parser")
     cur_section, out = None, []
@@ -34,7 +31,6 @@ async def get_links_from_site() -> List[SLink]:
     res = list(uniq.values())
     def sort_key(x: SLink):
         dd, mm = x.date.split(".")
-        # сортировка по месяцу/дню (без года)
         return (int(mm), int(dd))
     res.sort(key=sort_key, reverse=True)
     return res
