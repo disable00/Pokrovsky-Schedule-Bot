@@ -222,3 +222,40 @@ async def cmd_admin(m: Message):
     msg += [f"• {ulabel(r)}" for r in top] or ["— нет данных —"]
     msg += ["", "📝 <b>Последние 10 событий</b>"] + ([f"• {eline(r)}" for r in last] or ["— нет данных —"])
     await m.answer("".join(msg), parse_mode="HTML")
+
+from aiogram import Bot
+from aiogram.types import CallbackQuery
+from aiogram.exceptions import TelegramBadRequest
+from .config import settings
+from .subscription import ALLOWED_STATUSES, make_sub_keyboard
+
+async def on_check_subscription(cb: CallbackQuery, bot: Bot):
+    try:
+        await cb.answer()
+    except Exception:
+        pass
+
+    user_id = cb.from_user.id
+
+    ok = False
+    try:
+        member = await bot.get_chat_member(settings.NEWS_CHANNEL_ID, user_id)
+        ok = getattr(member, "status", None) in ALLOWED_STATUSES
+    except TelegramBadRequest:
+        ok = False
+
+    if ok:
+        if cb.message:
+            try:
+                await cb.message.edit_reply_markup(reply_markup=None)
+            except TelegramBadRequest:
+                pass
+            await cb.message.answer("Готово! Подписка найдена ✅\nНажмите /start, чтобы продолжить.")
+    else:
+        if cb.message:
+            try:
+                await cb.message.edit_reply_markup(reply_markup=make_sub_keyboard(settings.NEWS_CHANNEL_URL))
+            except TelegramBadRequest:
+                pass
+            await cb.message.answer("Пока не вижу подписки. Подпишитесь и нажмите «Проверить подписку» ещё раз.")
+
