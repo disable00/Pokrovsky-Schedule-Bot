@@ -3,9 +3,7 @@ import re
 from io import StringIO
 from typing import Dict, List, Optional, Set, Tuple
 from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
-
 from bs4 import BeautifulSoup
-
 from .http import fetch_text
 
 
@@ -38,7 +36,6 @@ async def resolve_google_url(schedule_page_url: str) -> str:
 
 
 async def sheets_meta(google_url: str) -> Tuple[Dict[str, str], Set[str]]:
-    """gid->title и множество всех gid из htmlview."""
     html_text = await fetch_text(htmlview_url(google_url))
     soup = BeautifulSoup(html_text, "html.parser")
     gid2title: Dict[str, str] = {}
