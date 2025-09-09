@@ -4,4 +4,4 @@ from dataclasses import dataclass
 class SLink:
     title: str
     url: str
-    date: str  # 'dd.mm'
+    date: str
